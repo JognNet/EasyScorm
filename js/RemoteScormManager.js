@@ -185,9 +185,29 @@ class RemoteScormManager {
 
     fakeScorm() {
         let that = this,
-            timestamp = new Date().getTime();
-        console.log('FakeScorm!');
-        that.SetValue('cmi.core.session_time', timestamp - that.timestart);
+            timestamp = new Date().getTime(),
+            session_time = timestamp - that.timestart,
+            cmit = {
+                'h': 0,
+                'm': 0,
+                's': 0,
+                'mm': session_time
+            };
+        cmit.s = Math.floor(cmit.mm / 1000);
+        cmit.mm -= cmit.s * 1000;
+        cmit.m = Math.floor(cmit.s / 60);
+        cmit.s -= cmit.m * 60;
+        cmit.h = Math.floor(cmit.m / 60);
+        cmit.m -= cmit.h * 60;
+
+        cmit.mm = `${cmit.mm}`.padStart(2, 0).substr(0, 2);
+        cmit.s = `${cmit.s}`.padStart(2, 0);
+        cmit.m = `${cmit.m}`.padStart(2, 0);
+        cmit.h = `${cmit.h}`.padStart(4, 0);
+
+        cmit = _.values(cmit).join(':');
+        console.log('FakeScorm! ==> ' + cmit);
+        that.SetValue('cmi.core.session_time', cmit);
         that.SetValue('cmi.core.lesson_status', 'incomplete');
         that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + timestamp + ')');
         that.Commit();
