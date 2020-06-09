@@ -8,6 +8,7 @@ class RemoteScormManager {
         that.cmi = {};
         that.mode = that.pm.mode;
         that.apiVersion = '1.2';
+        that.timestart = new Date().getTime();
         that.events = {
             ready: `RSCO_EVT_READY_${ that.mode ? 'MASTER' : 'SLAVE'}`
         }
@@ -49,6 +50,7 @@ class RemoteScormManager {
                 that.GetLastError();
                 that.GetValue('cmi.core.student_name');
                 that.GetLastError();
+                that.SetValue('cmi.core.lesson_status', 'incomplete');
                 that.fakeScorm();
             }
         });
@@ -180,12 +182,14 @@ class RemoteScormManager {
     // FAKE SCORM METHOD
 
     fakeScorm() {
-        let that = this;
-        that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + (new Date()).getTime() + ')');
+        let that = this,
+            timestamp = new Date().getTime();
+        that.SetValue('cmi.core.session_time', timestamp - that.timestart);
+        that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + timestamp + ')');
         that.Commit();
         setTimeout(() => {
             that.fakeScorm();
-        }, 60000);
+        }, 5000);
     }
 
     // SCORM 2004 METHODS
