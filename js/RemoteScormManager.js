@@ -206,7 +206,7 @@ class RemoteScormManager {
             cmit.s = `${cmit.s}`.padStart(2, 0);
             cmit.m = `${cmit.m}`.padStart(2, 0);
             cmit.h = `${cmit.h}`.padStart(4, 0);
-            cmit = _.values(cmit).join(':');
+            cmit = `${cmit.h}:${cmit.m}:${cmit.s}.${cmit.mm}`;
         } else {
             cmit = {
                 'Y': 0,
