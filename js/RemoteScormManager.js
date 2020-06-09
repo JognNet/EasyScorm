@@ -184,7 +184,9 @@ class RemoteScormManager {
     fakeScorm() {
         let that = this,
             timestamp = new Date().getTime();
+        console.log('FakeScorm!');
         that.SetValue('cmi.core.session_time', timestamp - that.timestart);
+        that.SetValue('cmi.core.lesson_status', 'incomplete');
         that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + timestamp + ')');
         that.Commit();
         setTimeout(() => {
