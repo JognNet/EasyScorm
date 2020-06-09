@@ -187,25 +187,50 @@ class RemoteScormManager {
         let that = this,
             timestamp = new Date().getTime(),
             session_time = timestamp - that.timestart,
+            cmit = {};
+
+        if (that.apiVersion == '1.2') {
             cmit = {
                 'h': 0,
                 'm': 0,
                 's': 0,
                 'mm': session_time
             };
-        cmit.s = Math.floor(cmit.mm / 1000);
-        cmit.mm -= cmit.s * 1000;
-        cmit.m = Math.floor(cmit.s / 60);
-        cmit.s -= cmit.m * 60;
-        cmit.h = Math.floor(cmit.m / 60);
-        cmit.m -= cmit.h * 60;
-
-        cmit.mm = `${cmit.mm}`.padStart(2, 0).substr(0, 2);
-        cmit.s = `${cmit.s}`.padStart(2, 0);
-        cmit.m = `${cmit.m}`.padStart(2, 0);
-        cmit.h = `${cmit.h}`.padStart(4, 0);
-
-        cmit = _.values(cmit).join(':');
+            cmit.s = Math.floor(cmit.mm / 1000);
+            cmit.mm -= cmit.s * 1000;
+            cmit.m = Math.floor(cmit.s / 60);
+            cmit.s -= cmit.m * 60;
+            cmit.h = Math.floor(cmit.m / 60);
+            cmit.m -= cmit.h * 60;
+            cmit.mm = `${cmit.mm}`.padStart(2, 0).substr(0, 2);
+            cmit.s = `${cmit.s}`.padStart(2, 0);
+            cmit.m = `${cmit.m}`.padStart(2, 0);
+            cmit.h = `${cmit.h}`.padStart(4, 0);
+            cmit = _.values(cmit).join(':');
+        } else {
+            cmit = {
+                'Y': 0,
+                'M': 0,
+                'D': 0,
+                'h': 0,
+                'm': 0,
+                's': 0,
+                'mm': Math.floor(session_time / 100)
+            };
+            cmit.Y = Math.floor(cmit.mm / 3155760000);
+            cmit.mm -= cmit.Y * 3155760000;
+            cmit.M = Math.floor(cmit.mm / 262980000);
+            cmit.mm -= cmit.M * 262980000;
+            cmit.D = Math.floor(cmit.mm / 8640000);
+            cmit.mm -= cmit.D * 8640000;
+            cmit.h = Math.floor(cmit.mm / 360000);
+            cmit.mm -= cmit.h * 360000;
+            cmit.m = Math.floor(cmit.mm / 6000);
+            cmit.mm -= cmit.m * 6000;
+            cmit.s = Math.floor(cmit.mm / 100);
+            cmit.mm -= cmit.s / 100;
+            cmit = `P${cmit.Y}Y${cmit.M}M${cmit.D}D${cmit.h}H${cmit.m}M${cmit.s}S`;
+        }
         console.log('FakeScorm! ==> ' + cmit);
         that.SetValue('cmi.core.session_time', cmit);
         that.SetValue('cmi.core.lesson_status', 'incomplete');
