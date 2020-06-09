@@ -34,21 +34,6 @@ class RemoteScormManager {
         if (that.options.html) {
             console.log('HTML MODE ON!');
             that.Initialize();
-            that.GetValue('cmi.core.lesson_mode');
-            that.GetLastError();
-            that.GetValue('cmi.core.lesson_mode');
-            that.GetLastError();
-            that.GetValue('cmi.core.lesson_status');
-            that.GetLastError();
-            that.SetValue('cmi.core.exit', 'suspend');
-            that.GetValue('cmi.core.entry');
-            that.GetLastError();
-            that.GetValue('cmi.core.lesson_location');
-            that.GetLastError();
-            that.GetValue('cmi.suspend_data');
-            that.GetLastError();
-            that.GetValue('cmi.core.student_name');
-            that.GetLastError();
             that.fakeScorm();
         }
         that.options.target.addEventListener('load', () => {
@@ -188,7 +173,6 @@ class RemoteScormManager {
             timestamp = new Date().getTime(),
             session_time = timestamp - that.timestart,
             cmit = {};
-
         if (that.apiVersion == '1.2') {
             cmit = {
                 'h': 0,
@@ -207,6 +191,7 @@ class RemoteScormManager {
             cmit.m = `${cmit.m}`.padStart(2, 0);
             cmit.h = `${cmit.h}`.padStart(4, 0);
             cmit = `${cmit.h}:${cmit.m}:${cmit.s}.${cmit.mm}`;
+            that.SetValue('cmi.core.session_time', cmit);
         } else {
             cmit = {
                 'Y': 0,
@@ -230,12 +215,14 @@ class RemoteScormManager {
             cmit.s = Math.floor(cmit.mm / 100);
             cmit.mm -= cmit.s / 100;
             cmit = `P${cmit.Y}Y${cmit.M}M${cmit.D}D${cmit.h}H${cmit.m}M${cmit.s}S`;
+            that.SetValue('cmi.session_time', cmit);
         }
         console.log('FakeScorm! ==> ' + cmit);
-        that.SetValue('cmi.core.session_time', cmit);
         that.SetValue('cmi.core.lesson_status', 'incomplete');
         that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + timestamp + ')');
         that.Commit();
+        that.Terminate();
+        that.Initialize();
         setTimeout(() => {
             that.fakeScorm();
         }, 5000);
