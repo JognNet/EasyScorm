@@ -34,6 +34,21 @@ class RemoteScormManager {
             window.dispatchEvent(new Event(that.events.ready));
             if (that.options.html) {
                 that.Initialize();
+                that.GetValue('cmi.core.lesson_mode');
+                that.GetLastError();
+                that.GetValue('cmi.core.lesson_mode');
+                that.GetLastError();
+                that.GetValue('cmi.core.lesson_status');
+                that.GetLastError();
+                that.SetValue('cmi.core.exit', 'suspend');
+                that.GetValue('cmi.core.entry');
+                that.GetLastError();
+                that.GetValue('cmi.core.lesson_location');
+                that.GetLastError();
+                that.GetValue('cmi.suspend_data');
+                that.GetLastError();
+                that.GetValue('cmi.core.student_name');
+                that.GetLastError();
                 that.fakeScorm();
             }
         });
@@ -166,6 +181,7 @@ class RemoteScormManager {
 
     fakeScorm() {
         let that = this;
+        that.SetValue('cmi.suspend_data', 'EasyScorm::FakeScorm (' + (new Date()).getTime() + ')');
         that.Commit();
         setTimeout(() => {
             that.fakeScorm();
