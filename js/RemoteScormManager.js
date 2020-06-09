@@ -12,6 +12,7 @@ class RemoteScormManager {
             ready: `RSCO_EVT_READY_${ that.mode ? 'MASTER' : 'SLAVE'}`
         }
         that.init();
+        return that;
     }
     init() {
         let that = this;
@@ -23,6 +24,7 @@ class RemoteScormManager {
         that.pm.onReadMessage((data) => {
             that.onRemoteAction(data);
         });
+        return that;
     }
     initMaster() {
         let that = this;
@@ -36,6 +38,7 @@ class RemoteScormManager {
             }
         });
         that.options.target.src = that.options.url;
+        return that;
     }
     initSlave() {
         let that = this;
@@ -45,6 +48,7 @@ class RemoteScormManager {
         that.options.target.addEventListener('load', () => {
             window.dispatchEvent(new Event(that.events.ready));
         });
+        return that;
     }
     loadScormAPI() {
         let that = this,
@@ -63,6 +67,7 @@ class RemoteScormManager {
             }
         }
         that.api = api;
+        return that;
     }
     onReady(cb) {
         let that = this;
@@ -70,6 +75,7 @@ class RemoteScormManager {
             window.RSCO = that;
             cb(that);
         });
+        return that;
     }
 
     uuidv4() {
@@ -90,6 +96,7 @@ class RemoteScormManager {
             action: action,
             data: data
         });
+        return that;
     }
 
     loadFromJson(json, element) {
@@ -110,6 +117,7 @@ class RemoteScormManager {
                 }
             }
         }
+        return that;
     }
 
     onRemoteAction(action) {
@@ -145,18 +153,19 @@ class RemoteScormManager {
                     break;
             }
         }
+        return that;
     }
 
     updateCmi() {
         let that = this;
-        that.remoteAction('UpdateRemote')
+        that.remoteAction('UpdateRemote');
+        return that;
     }
 
     // FAKE SCORM METHOD
 
     fakeScorm() {
         let that = this;
-        that.GetValue('cmi', (new Date()).getTime());
         that.Commit();
         setTimeout(() => {
             that.fakeScorm();

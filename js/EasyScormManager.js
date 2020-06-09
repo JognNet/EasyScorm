@@ -25,20 +25,9 @@ class EasyScormManager {
         }
         return new RemoteScormManager({
             url: options.url,
+            html: options.html,
             target: document.getElementById('index_scorm')
-        }).onReady(() => {
-            if (options.html) {
-                that.rsco.Initialize();
-                that.htmlUpdater();
-            }
-        });
-    }
-    htmlUpdater() {
-        let that = this;
-        setTimeout(() => {
-            that.rsco.Commit();
-            that.htmlUpdater();
-        }, 60000);
+        }).onReady(() => {});
     }
 }
 window.EasyScorm = new EasyScormManager();
