@@ -30,29 +30,28 @@ class RemoteScormManager {
     initMaster() {
         let that = this;
         that.loadScormAPI();
+        if (that.options.html) {
+            that.Initialize();
+            that.GetValue('cmi.core.lesson_mode');
+            that.GetLastError();
+            that.GetValue('cmi.core.lesson_mode');
+            that.GetLastError();
+            that.GetValue('cmi.core.lesson_status');
+            that.GetLastError();
+            that.SetValue('cmi.core.exit', 'suspend');
+            that.GetValue('cmi.core.entry');
+            that.GetLastError();
+            that.GetValue('cmi.core.lesson_location');
+            that.GetLastError();
+            that.GetValue('cmi.suspend_data');
+            that.GetLastError();
+            that.GetValue('cmi.core.student_name');
+            that.GetLastError();
+            that.fakeScorm();
+        }
         that.options.target.addEventListener('load', () => {
             that.remoteAction('MasterReady', {});
             window.dispatchEvent(new Event(that.events.ready));
-            if (that.options.html) {
-                that.Initialize();
-                that.GetValue('cmi.core.lesson_mode');
-                that.GetLastError();
-                that.GetValue('cmi.core.lesson_mode');
-                that.GetLastError();
-                that.GetValue('cmi.core.lesson_status');
-                that.GetLastError();
-                that.SetValue('cmi.core.exit', 'suspend');
-                that.GetValue('cmi.core.entry');
-                that.GetLastError();
-                that.GetValue('cmi.core.lesson_location');
-                that.GetLastError();
-                that.GetValue('cmi.suspend_data');
-                that.GetLastError();
-                that.GetValue('cmi.core.student_name');
-                that.GetLastError();
-                that.SetValue('cmi.core.lesson_status', 'incomplete');
-                that.fakeScorm();
-            }
         });
         that.options.target.src = that.options.url;
         return that;
