@@ -259,9 +259,9 @@ class RemoteScormManager {
             res = true;
         if (that.mode) {
             if (that.apiVersion == '1.2') {
-                res = that.api.LMSCommit();
+                res = that.api.LMSCommit('');
             } else {
-                res = that.api.Commit();
+                res = that.api.Commit('');
             }
         } else {
             that.remoteAction('Commit', {});
