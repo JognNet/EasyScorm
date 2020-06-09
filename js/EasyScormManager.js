@@ -26,7 +26,7 @@ class EasyScormManager {
         }
         return new RemoteScormManager({
             url: options.url,
-            html: options.html,
+            html: !options.isScormContent,
             target: document.getElementById('index_scorm')
         }).onReady(() => {});
     }
