@@ -11,6 +11,7 @@ class EasyScormManager {
     }
     masterEasyScorm(options) {
         let that = this;
+        that.options = options;
         for (let i = 0; i < _.size(options.stylesheets); i++) {
             let stylesheet = stylesheets[i],
                 stylesheet_dom = document.createElement('link');
