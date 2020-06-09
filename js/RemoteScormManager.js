@@ -28,9 +28,11 @@ class RemoteScormManager {
         return that;
     }
     initMaster() {
+        console.log('INIT MASTER!');
         let that = this;
         that.loadScormAPI();
         if (that.options.html) {
+            console.log('HTML MODE ON!');
             that.Initialize();
             that.GetValue('cmi.core.lesson_mode');
             that.GetLastError();
@@ -57,6 +59,7 @@ class RemoteScormManager {
         return that;
     }
     initSlave() {
+        console.log('INIT SLAVE!');
         let that = this;
         that.api = that;
         window.API = that;
