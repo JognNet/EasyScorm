@@ -41,3 +41,4 @@ class EasyScormManager {
         }, 60000);
     }
 }
+window.EasyScorm = new EasyScormManager();
