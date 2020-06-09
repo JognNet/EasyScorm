@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>EasyScorm</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.4.1/pulse/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="./css/style.css">
+    <script src="https://cdn.jsdelivr.net/gh/JognNet/simplify-scorm@master/dist/scormAPI.min.js"></script>
+    <script>
+      window.API.apiLogLevel = 1;
+      window.easyscorm_test = {
+        url: '',
+        courseId: 1,
+        courseTitle: '',
+        scormId: 1,
+        scormTitle: '',
+        author: '',
+        isScormContent: true,
+        extras: {
+          stylesheets: [],
+          javascripts: []
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <b-container fluid class="d-flex flex-column h-100 p-0" id="app">
+        <b-navbar type="dark" variant="primary" class="position-sticky sticky-top">
+          <b-navbar-brand href="#">EasyScorm</b-navbar-brand>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item href="https://jogn.net"><i class="fas fa-globe-europe h3 mb-0 mr-2 ml-2"></i></b-nav-item>
+            <b-nav-item href="https://github.com/JognNet/EasyScorm"><i class="fab fa-github h3 mb-0 mr-2 ml-2"></i></b-nav-item>
+          </b-navbar-nav>
+        </b-navbar>
+        <b-row no-gutters class="flex-fill">
+            <b-col id="preview-panel">
+                <iframe src="index_scorm.html" id="preview"></iframe>
+            </b-col>
+            <b-col id="properties-panel">
+              <b-card no-body bg-variant="dark" text-variant="light" class="h-100">
+                <b-tabs card class="flex-fill">
+                  <b-tab title="Properties" active>
+                    <b-form-group id="easyscorm-prop-url-group" label="Scorm url:" label-for="easyscorm-prop-url">
+                      <b-form-input id="easyscorm-prop-url" v-model="easyscorm.url" type="text" placeholder="Enter url" ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="easyscorm-prop-course-id-group" label="Scorm course id:" label-for="easyscorm-prop-course-id">
+                      <b-form-input id="easyscorm-prop-course-id" v-model="easyscorm.courseId" type="number" min="1" placeholder="Enter course id"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="easyscorm-prop-course-title-group" label="Course title:" label-for="easyscorm-prop-course-title">
+                      <b-form-input id="easyscorm-prop-course-title" v-model="easyscorm.courseTitle" type="text" placeholder="Enter course title" ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="easyscorm-prop-scorm-id-group" label="Scorm id:" label-for="easyscorm-prop-scorm-id">
+                      <b-form-input id="easyscorm-prop-scorm-id" v-model="easyscorm.scormId" type="number" min="1" placeholder="Enter scorm id"></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="easyscorm-prop-scorm-title-group" label="Scorm title:" label-for="easyscorm-prop-scorm-title">
+                      <b-form-input id="easyscorm-prop-scorm-title" v-model="easyscorm.scormTitle" type="text" placeholder="Enter scorm title" ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="easyscorm-prop-author-group" label="Author:" label-for="easyscorm-prop-author">
+                      <b-form-input id="easyscorm-prop-author" v-model="easyscorm.author" type="text" placeholder="Enter author"></b-form-input>
+                    </b-form-group>
+                    <b-form-checkbox v-model="easyscorm.isScormContent" id="easyscorm-prop-is-scorm-content" switch>
+                      The content type is <b v-if="easyscorm.isScormContent">Scorm Content</b><b v-else>HTML Content</b>
+                    </b-form-checkbox>
+                    <div v-if="easyscorm.isScormContent">
+                      <b-card no-body bg-variant="secondary" text-variant="dark" class="mt-3">
+                        <b-card-text class="p-3 mb-0">
+                          To use a Scorm in a different domain, you need to use <b>"EasyScorm: Doppelgänger"</b> as your index.html file and your Scorm must be called index_scorm.html.
+                        </b-card-text>
+                        <b-card-footer>
+                          <b-button type="button" variant="primary" @click="onDownloadDP" block><b-icon-cloud-download class="mr-1"></b-icon-cloud-download>Download Doppelgänger</b-button>
+                        </b-card-footer>
+                      </b-card>
+                    </div>
+                  </b-tab>
+                  <b-tab title="Extras">
+                    <b-card no-body bg-variant="secondary" text-variant="dark" class="mt-3">
+                      <b-card-header>
+                        Extra Stylesheets
+                      </b-card-header>
+                      <b-list-group flush>
+                        <draggable v-model="easyscorm.extras.stylesheets" @start="drag=true" @end="drag=false">
+                          <b-list-group-item v-for="(stylesheet, stylesheetId) of easyscorm.extras.stylesheets" :key="stylesheetId" class="bg-light text-dark draggable">
+                            <div class="d-flex">
+                              <div><b-icon-list class="mr-1"></b-icon-list></div>
+                              <div class="flex-grow-1">{{stylesheet}}</div>
+                              <div><b-button type="button" variant="danger" @click="onRemoveExtraStyleesheet(stylesheetId)"><b-icon-trash></b-icon-trash></b-button></div>
+                            </div>
+                          </b-list-group-item>
+                        </draggable>
+                      </b-list-group>
+                      <b-card-footer>
+                        <b-input-group class="mt-3">
+                          <template v-slot:append>
+                            <b-input-group-text @click="onAddExtraStylesheet">
+                              <b-icon-file-earmark-plus></b-icon-file-earmark-plus>
+                            </b-input-group-text>
+                          </template>
+                          <b-form-input id="easyscorm-extra-add-stylesheet" v-model="tmp.extras.stylesheet" @keydown.native="onAddExtraStylesheetKeyDown"></b-form-input>
+                        </b-input-group>
+                      </b-card-footer>
+                    </b-card>
+                    <b-card no-body bg-variant="secondary" text-variant="dark" class="mt-3">
+                      <b-card-header>
+                        Extra Javascripts
+                      </b-card-header>
+                      <b-list-group flush>
+                        <draggable v-model="easyscorm.extras.javascripts" @start="drag=true" @end="drag=false">
+                          <b-list-group-item v-for="(javascript, javascriptId) of easyscorm.extras.javascripts" :key="javascriptId" class="bg-light text-dark draggable">
+                            <div class="d-flex">
+                              <div><b-icon-list class="mr-1"></b-icon-list></div>
+                              <div class="flex-grow-1">{{javascript}}</div>
+                              <div><b-button type="button" variant="danger" @click="onRemoveExtraStyleesheet(javascriptId)"><b-icon-trash></b-icon-trash></b-button></div>
+                            </div>
+                          </b-list-group-item>
+                        </draggable>
+                      </b-list-group>
+                      <b-card-footer>
+                        <b-input-group class="mt-3">
+                          <template v-slot:append>
+                            <b-input-group-text @click="onAddExtraJavascript">
+                              <b-icon-file-earmark-plus></b-icon-file-earmark-plus>
+                            </b-input-group-text>
+                          </template>
+                          <b-form-input id="easyscorm-extra-add-javascript" v-model="tmp.extras.javascript" @keydown.native="onAddExtraJavascriptKeyDown"></b-form-input>
+                        </b-input-group>
+                      </b-card-footer>
+                    </b-card>
+                  </b-tab>
+                </b-tabs>
+                <b-card-footer class="text-center">
+                  <b-row no-gutters>
+                    <b-col class="mr-1">
+                      <b-button type="button" variant="primary" @click="onPreview" block><b-icon-eye class="mr-1"></b-icon-eye>Preview</b-button>
+                    </b-col>
+                    <b-col class="ml-1">
+                      <b-button type="reset" variant="danger" @click="onReset" block><b-icon-arrow-counterclockwise class="mr-1"></b-icon-arrow-counterclockwise>Reset</b-button>
+                    </b-col>
+                  </b-row>
+                  <b-row no-gutters class="mt-2">
+                    <b-col class="mr-1">
+                      <b-button type="button" variant="success" @click="onDownload" block><b-icon-cloud-download class="mr-1"></b-icon-cloud-download>Download</b-button>
+                    </b-col>
+                    <b-col class="ml-1">
+                      <b-button type="reset" variant="warning" @click="onUpload" block><b-icon-cloud-upload class="mr-1"></b-icon-cloud-upload>Upload</b-button>
+                    </b-col>
+                  </b-row>
+                </b-card-footer>
+              </b-card>
+            </b-col>
+        </b-row>
+    </b-container>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.3.0/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+    <script src="https://kit.fontawesome.com/3656d3c913.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>
