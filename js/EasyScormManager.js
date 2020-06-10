@@ -12,15 +12,15 @@ class EasyScormManager {
     masterEasyScorm(options) {
         let that = this;
         that.options = options;
-        for (let i = 0; i < _.size(options.stylesheets); i++) {
-            let stylesheet = stylesheets[i],
+        for (let i = 0; i < _.size(options.extras.stylesheets); i++) {
+            let stylesheet = options.extras.stylesheets[i],
                 stylesheet_dom = document.createElement('link');
             stylesheet_dom.type = 'text/css';
             stylesheet_dom.rel = 'stylesheet';
             stylesheet_dom.href = stylesheet
         }
-        for (let i = 0; i < _.size(options.javascripts); i++) {
-            let javascript = javascripts[i],
+        for (let i = 0; i < _.size(options.extras.javascripts); i++) {
+            let javascript = options.extras.javascripts[i],
                 javascript_dom = document.createElement('script');
             javascript_dom.src = javascript
         }
